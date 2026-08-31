@@ -1,4 +1,4 @@
-# Normalize repository text while keeping hardware and firmware artifacts binary.
+# 统一仓库文本格式，同时保持硬件和固件产物为二进制文件
 * text=auto
 
 *.c       text eol=lf

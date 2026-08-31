@@ -1,169 +1,157 @@
-# FlightControl Firmware
+# FlightControl 飞控固件
 
-[![Version](https://img.shields.io/badge/version-0.1.0--alpha.1-orange)](./VERSION)
-[![Platform](https://img.shields.io/badge/platform-Zynq--7000-blue)](#hardware-and-toolchain)
-[![RTOS](https://img.shields.io/badge/RTOS-FreeRTOS-2ea44f)](#hardware-and-toolchain)
-[![Status](https://img.shields.io/badge/status-pre--flight%20development-red)](#project-status)
+[![版本](https://img.shields.io/badge/版本-0.1.0--alpha.1-orange)](./VERSION)
+[![平台](https://img.shields.io/badge/平台-Zynq--7000-blue)](#硬件与工具链)
+[![实时系统](https://img.shields.io/badge/实时系统-FreeRTOS-2ea44f)](#硬件与工具链)
+[![状态](https://img.shields.io/badge/状态-飞控开发阶段-red)](#项目状态)
 
-FlightControl Firmware is an experimental flight-control software platform for a
-Zynq-7000 SoC. The current codebase targets the ARM Cortex-A9 Processing System
-(PS), uses FreeRTOS, and retains the existing FPGA bitstream and Xilinx SDK 2019.1
-hardware platform.
+FlightControl 是一个面向 Zynq-7000 SoC 的实验性飞控软件平台。当前代码运行在
+ARM Cortex-A9 处理系统（PS）上，使用 FreeRTOS，并沿用现有 FPGA bitstream 和
+Xilinx SDK 2019.1 硬件平台。
 
-The project is being developed first as a safe, testable ARM-side foundation for
-multirotor flight control. Hexacopter support is the first target; fixed-wing and
-other vehicle types are planned through vehicle-specific control and allocation
-modules.
+项目首先建设安全、可测试的 ARM 端飞控基础平台，首个目标机型为六旋翼；后续通过
+机型专用的控制器和控制分配模块扩展固定翼及其他飞行器。
 
 > [!WARNING]
-> This repository is pre-flight software. Offline compilation has been verified,
-> but the current development image has not completed JTAG, FPGA programming,
-> actuator, propulsion, power-distribution, or flight validation. Do not connect
-> propellers, motors, servos, relays, or other hazardous loads when running an
-> unreviewed build. Historical boot images must not be flashed without a separate
-> verification procedure.
+> 当前仓库属于飞行前开发软件。离线编译已经验证，但当前开发版本尚未完成 JTAG、
+> FPGA 下载、执行机构、动力系统、配电和实飞验证。运行未经审查的版本时，不得连接
+> 螺旋桨、电机、舵机、继电器或其他危险负载。历史启动镜像未经专项验证不得烧写。
 
-## Project Status
+## 项目状态
 
-Current version: [`0.1.0-alpha.1`](./VERSION)
+当前版本：[`0.1.0-alpha.1`](./VERSION)
 
-| Area | Status |
+| 模块 | 状态 |
 |---|---|
-| Xilinx SDK 2019.1 workspace migration | Complete |
-| FSBL BSP offline build | Verified |
-| FSBL Debug build | Verified |
-| FlightControl FreeRTOS BSP build | Verified |
-| FlightControl Debug build | Verified |
-| FlightControl Release build | Not yet fixed |
-| JTAG chain on the current development workspace | Not verified |
-| FPGA programming and ELF execution | Not verified |
-| Sensor and I/O validation on hardware | Not verified |
-| Actuator and propulsion output | Disabled/not approved for testing |
-| Flight-control algorithms | Initial framework only |
-| QGroundControl integration | Planned |
-| Vitis 2024.2 migration | Deferred |
+| Xilinx SDK 2019.1 工作区迁移 | 已完成 |
+| FSBL BSP 离线构建 | 已验证 |
+| FSBL Debug 构建 | 已验证 |
+| FlightControl FreeRTOS BSP 构建 | 已验证 |
+| FlightControl Debug 构建 | 已验证 |
+| FlightControl Release 构建 | 尚未修复 |
+| 当前开发工作区 JTAG 链 | 尚未验证 |
+| FPGA 下载与 ELF 运行 | 尚未验证 |
+| 传感器和板级 I/O 实机验证 | 尚未验证 |
+| 执行机构和动力输出 | 禁止测试/尚未批准 |
+| 飞行控制算法 | 仅有初始框架 |
+| QGroundControl 集成 | 计划中 |
+| Vitis 2024.2 迁移 | 暂缓 |
 
-The immediate development priority is:
+近期开发优先级：
 
-1. establish a reproducible source and build baseline;
-2. make actuator, power, and flash writes safe by default;
-3. add monotonic time, diagnostics, and task health monitoring;
-4. introduce timestamped data models and non-blocking sensor paths;
-5. implement standard MAVLink services and QGroundControl connectivity;
-6. add host-tested estimation and hexacopter control modules;
-7. validate through SIL/HIL before powered hardware tests.
+1. 建立可重复恢复和构建的源码基线；
+2. 让执行机构、配电和 Flash 写入默认处于禁止状态；
+3. 增加单调时间、诊断和任务健康监测；
+4. 建立带时间戳的数据模型和非阻塞传感器通路；
+5. 实现标准 MAVLink 服务和 QGroundControl 连接；
+6. 增加可在 PC 上测试的状态估计和六旋翼控制模块；
+7. 在带动力硬件测试前完成 SIL/HIL 验证。
 
-## Architecture
+## 总体架构
 
 ```text
-Sensors and external inputs
+传感器与外部输入
   IMU / GF404 / GNSS / ADC / RC / MAVLink / CAN
-                         |
-                         v
-Board support and drivers
-  UART / SPI / CAN / GPIO / QSPI / custom AXI IP
-                         |
-                         v
-Flight-control platform services
-  time / status / health / parameters / logging / message bus
-                         |
-                         v
-Estimation -> guidance -> control -> control allocation
-                         |
-                         v
-Safety and actuator arbitration
-                         |
-                         v
-PWM / CAN ESC / servo / WP40 / power distribution
+                         │
+                         ▼
+板级支持与驱动
+  UART / SPI / CAN / GPIO / QSPI / 自定义 AXI IP
+                         │
+                         ▼
+飞控公共服务
+  时间 / 状态 / 健康监测 / 参数 / 日志 / 消息总线
+                         │
+                         ▼
+状态估计 → 导航制导 → 控制器 → 控制分配
+                         │
+                         ▼
+安全状态机与执行机构仲裁
+                         │
+                         ▼
+PWM / CAN ESC / 舵机 / WP40 / 配电控制
 ```
 
-The intended design separates:
+设计目标是明确分离：
 
-- board and Xilinx-specific code from platform-independent algorithms;
-- sensor drivers from state estimation;
-- control laws from actuator drivers;
-- vehicle-independent services from hexacopter or fixed-wing behavior;
-- operator commands from the final onboard safety decision.
+- 板卡/Xilinx 专用代码与平台无关算法；
+- 传感器驱动与状态估计；
+- 控制律与执行机构驱动；
+- 公共飞控服务与六旋翼、固定翼等机型逻辑；
+- 地面站操作命令与机载最终安全决策。
 
-Real-time stabilization and failsafe behavior must remain onboard. A ground
-station is used for monitoring, configuration, mission planning, and command
-delivery, but is never part of the inner control loop.
+实时稳定控制和失效保护必须留在机载端。地面站用于监控、配置、任务规划和命令下发，
+不能成为内环控制链的一部分。
 
-## Repository Layout
+## 仓库结构
 
 ```text
 .
-├─ design_top_wrapper_hw_platform_0/  Imported hardware platform, HDF and bitstream
-├─ FSBL_bsp/                          Standalone BSP used by the FSBL
-├─ FSBL/                              Zynq first-stage bootloader application
-├─ FlightControl_bsp/                 FreeRTOS/Xilinx BSP for the main application
-├─ FlightControl/                     Main ARM flight-control application
+├─ design_top_wrapper_hw_platform_0/  导入的硬件平台、HDF 和 bitstream
+├─ FSBL_bsp/                          FSBL 使用的 Standalone BSP 配置
+├─ FSBL/                              Zynq 第一阶段启动程序
+├─ FlightControl_bsp/                 主应用的 FreeRTOS/Xilinx BSP 配置
+├─ FlightControl/                     ARM 飞控主应用
 │  └─ src/
-│     ├─ main.c                       FreeRTOS entry point
-│     ├─ flight_control/              Current 1 ms control-task framework
-│     ├─ ucas/                        Existing board and peripheral drivers
-│     └─ mavlink/                     Generated MAVLink C headers
-├─ bootimage/                         Historical BIF and boot-image references
-├─ AI_HANDOFF.md                      Detailed engineering state and safety notes
-├─ MIGRATION_README.md                SDK workspace migration record
-├─ CHANGELOG.md                       User-visible version history
-└─ VERSION                            Canonical firmware version
+│     ├─ main.c                       FreeRTOS 程序入口
+│     ├─ flight_control/              当前 1 ms 控制任务框架
+│     ├─ ucas/                        现有板级和外设驱动
+│     └─ mavlink/                     生成的 MAVLink C 头文件
+├─ bootimage/                         历史 BIF 参考文件
+├─ AI_HANDOFF.md                      工程状态和安全交接说明
+├─ MIGRATION_README.md                SDK 工作区迁移记录
+├─ CHANGELOG.md                       版本变更记录
+└─ VERSION                            当前固件版本
 ```
 
-Eclipse workspace metadata, compiler outputs, processor-specific BSP generation
-trees, logs, and historical boot binaries are excluded from version control. BSP
-project descriptors and `system.mss` files are tracked so SDK 2019.1 can regenerate
-the libraries. Application source, custom hardware-platform drivers, hardware
-handoff files, and the reference bitstream remain versioned so the current SDK
-platform can be reconstructed.
+仓库不跟踪 Eclipse Workspace 元数据、编译输出、处理器专用 BSP 生成目录、日志和历史
+BOOT.BIN。BSP 的工程描述和 `system.mss` 会被跟踪，由 SDK 2019.1 重新生成相关库。
+应用源码、硬件平台中的自定义驱动、硬件交接文件和参考 bitstream 会进入版本管理，以便
+恢复当前 SDK 硬件平台。
 
-## Hardware and Toolchain
+## 硬件与工具链
 
-| Item | Current baseline |
+| 项目 | 当前基线 |
 |---|---|
-| Device family | Zynq-7000 |
-| HDF device identifier | `XA7Z020CLG484-1Q` |
+| 器件系列 | Zynq-7000 |
+| HDF 器件标识 | `XA7Z020CLG484-1Q` |
 | CPU | `ps7_cortexa9_0` / ARM Cortex-A9 |
 | SDK | Xilinx SDK 2019.1 |
-| Application OS | `freertos10_xilinx 1.3` |
-| FSBL OS | `standalone 7.0` |
-| Application compiler | ARM GNU, hard-float configuration |
-| Ground station direction | QGroundControl through MAVLink 2 |
+| 应用操作系统 | `freertos10_xilinx 1.3` |
+| FSBL 操作系统 | `standalone 7.0` |
+| 应用编译器 | ARM GNU，硬浮点配置 |
+| 地面站方向 | QGroundControl + MAVLink 2 |
 
-The device identifier must be checked against the physical component marking and
-schematic before hardware regeneration or boot-image programming.
+在重新生成硬件或烧写启动镜像前，必须根据芯片丝印和原理图复核器件型号，不能只依据
+HDF 中的标识选型。
 
-The repository contains an imported HDF and existing bitstream, not a complete
-Vivado source project. It does not currently provide a reliable way to modify pin
-constraints, clocks, block design, or custom IP RTL and regenerate the PL design.
+仓库包含导入的 HDF 和现有 bitstream，但不包含完整 Vivado 源工程。目前无法可靠修改
+管脚约束、时钟、Block Design 或定制 IP RTL，也不能保证重新生成相同的 PL 设计。
 
-## Getting Started
+## 快速开始
 
-### 1. Clone
+### 1. 克隆仓库
 
-Use a short, ASCII-only path when possible because the legacy SDK and generated
-build tools can be sensitive to spaces and non-ASCII paths.
+旧版 SDK 和生成工具可能对空格、中文路径较敏感，建议使用较短的纯英文目录。
 
 ```powershell
 git clone https://github.com/waitter-01/flightcontrol-firmware.git D:\ZynqWork\flightcontrol-firmware
 cd D:\ZynqWork\flightcontrol-firmware
 ```
 
-### 2. Install the supported toolchain
+### 2. 安装指定工具链
 
-Install Xilinx SDK 2019.1. The currently verified installation is located at:
+安装 Xilinx SDK 2019.1。当前已经验证的安装位置是：
 
 ```text
 D:\Xilinx\SDK\2019.1
 ```
 
-Other SDK releases may regenerate BSP content or change compiler behavior. Do not
-upgrade the project implicitly; toolchain migration is a separate tracked task.
+其他 SDK 版本可能重新生成 BSP 或改变编译器行为。不得隐式升级工程；工具链升级必须作为
+独立任务进行验证和记录。
 
-### 3. Open a fresh workspace
+### 3. 打开全新 Workspace
 
-The repository intentionally does not track `.metadata`. Start SDK with the clone
-directory as the workspace, then import the existing projects.
+仓库不会跟踪 `.metadata`。使用克隆目录作为 Workspace 启动 SDK，然后导入现有项目。
 
 ```powershell
 & 'D:\Xilinx\SDK\2019.1\bin\xsdk.bat' `
@@ -171,8 +159,8 @@ directory as the workspace, then import the existing projects.
   -eclipseargs -clean
 ```
 
-Import these projects using **File → Import → General → Existing Projects into
-Workspace** without copying them:
+在 SDK 中选择 **File → Import → General → Existing Projects into Workspace**，
+依次导入以下项目，且不要勾选复制：
 
 1. `design_top_wrapper_hw_platform_0`
 2. `FSBL_bsp`
@@ -180,17 +168,16 @@ Workspace** without copying them:
 4. `FlightControl_bsp`
 5. `FlightControl`
 
-### 4. Build
+### 4. 构建工程
 
-Recommended order:
+推荐构建顺序：
 
-1. regenerate/build `FSBL_bsp` after a fresh clone or when its hardware/BSP
-   settings changed;
-2. build `FSBL` using the Debug configuration;
-3. regenerate/build `FlightControl_bsp` after a fresh clone or when required;
-4. build `FlightControl` using the Debug configuration.
+1. 首次克隆后生成/构建 `FSBL_bsp`，硬件或 BSP 设置变化后重新生成；
+2. 使用 Debug 配置构建 `FSBL`；
+3. 首次克隆后生成/构建 `FlightControl_bsp`，需要时重新生成；
+4. 使用 Debug 配置构建 `FlightControl`。
 
-Expected local artifacts:
+预期本地产物：
 
 ```text
 FSBL/Debug/FSBL.elf
@@ -198,133 +185,124 @@ FlightControl/Debug/FlightControl.elf
 FlightControl_bsp/ps7_cortexa9_0/lib/libmetal.a
 ```
 
-These artifacts are intentionally ignored by Git. A command-line reproducible
-build script is planned; until then, record the SDK console output when changing
-project or BSP configuration.
+这些产物不会进入 Git。命令行可重复构建脚本仍在计划中；在脚本完成以前，修改项目或 BSP
+配置时应保存 SDK Console 的完整构建输出。
 
-## Runtime Notes
+## 运行说明
 
-- FlightControl `stdin`/`stdout` use `ps7_coresight_comp_0`, so application
-  `printf`/`xil_printf` output is expected through JTAG DCC rather than a normal
-  serial terminal.
-- FSBL output uses physical `ps7_uart_0`.
-- The application later configures PS UART0 for a receiver link at 420000 baud,
-  8 data bits, even parity, and 2 stop bits.
-- The current `flight_control_task` runs on a 1 ms schedule but the actual control
-  algorithm is largely unimplemented.
-- Existing initialization includes power-distribution GPIO, ADC, PS/PL UART,
-  QSPI, and sensor setup. Servo and WP40 initialization are currently commented
-  out, but that alone is not a complete safety guarantee.
+- FlightControl 的 `stdin`/`stdout` 使用 `ps7_coresight_comp_0`，应用层
+  `printf`/`xil_printf` 默认通过 JTAG DCC 输出，而不是普通串口；
+- FSBL 输出使用物理 `ps7_uart_0`；
+- 应用随后会把 PS UART0 配置为接收机链路：420000 波特率、8 数据位、偶校验、2 停止位；
+- 当前 `flight_control_task` 按 1 ms 周期运行，但实际控制算法基本尚未实现；
+- 现有初始化包含配电 GPIO、ADC、PS/PL UART、QSPI 和传感器；
+- 舵机和 WP40 初始化虽然已被注释，但这并不构成完整的安全保证。
 
-## Safety Rules
+## 安全规则
 
-Before any hardware run:
+任何上板运行前必须：
 
-1. disconnect motors, propellers, servos, relays, and hazardous loads;
-2. retain an immediate physical power-removal method;
-3. verify the JTAG chain using read-only target discovery first;
-4. halt at `main()` before allowing initialization to continue;
-5. inspect GPIO and power-distribution defaults one subsystem at a time;
-6. do not invoke QSPI erase/write functions;
-7. do not call `SetPD_*`, `SetSX_*`, `Servo_init`, or `wp40_Init` until the
-   channel-to-load mapping and safe state are documented and reviewed;
-8. do not flash historical `MAINBOOT.bin` or `BACKBOOT.bin` images.
+1. 断开电机、螺旋桨、舵机、继电器和其他危险负载；
+2. 保留可以立即物理断电的手段；
+3. 先用只读目标发现验证 JTAG 链；
+4. 下载 ELF 后先停在 `main()`，再决定是否继续初始化；
+5. 分模块检查 GPIO 和配电默认状态；
+6. 不调用任何 QSPI 擦除或写入函数；
+7. 通道—负载映射和安全状态完成记录、复核前，不调用 `SetPD_*`、`SetSX_*`、
+   `Servo_init` 或 `wp40_Init`；
+8. 不烧写历史 `MAINBOOT.bin` 或 `BACKBOOT.bin`。
 
-Safety behavior is part of the firmware architecture, not an operator procedure
-alone. Development builds will evolve toward actuator and flash writes being
-disabled by default and enabled only through explicit, audited state transitions.
+安全必须由固件架构保证，不能只依赖操作人员记住流程。后续开发版本将让执行机构和 Flash
+写入默认关闭，只允许通过明确、可审计的安全状态转换启用。
 
-## Development Roadmap
+## 开发路线
 
-- [x] Restore the SDK 2019.1 offline Debug build baseline.
-- [x] Create a clean development workspace separate from the legacy reference.
-- [ ] Add default actuator/power/flash-write guards.
-- [ ] Add monotonic time, status events, and RTOS health monitoring.
-- [ ] Audit linker memory, heap, BSS, and task stack usage.
-- [ ] Replace infinite waits in control paths with timestamped validity checks.
-- [ ] Add static data topics and a non-blocking message path.
-- [ ] Refactor GF404, ADC, RC, and communication drivers behind stable interfaces.
-- [ ] Implement RAM-backed parameters and standard MAVLink microservices.
-- [ ] Verify basic connectivity with unmodified QGroundControl.
-- [ ] Add host-tested attitude estimation.
-- [ ] Add hexacopter rate/attitude control and control allocation.
-- [ ] Establish repeatable SIL and HIL fault-injection tests.
-- [ ] Perform a documented, load-disconnected hardware validation.
-- [ ] Extend the vehicle layer for position control and additional airframes.
-- [ ] Migrate to Vitis only after the 2019.1 baseline is reproducible on hardware.
+- [x] 恢复 SDK 2019.1 离线 Debug 构建基线；
+- [x] 建立与 legacy 对照区分离的开发工作区；
+- [x] 建立 GitHub 仓库、版本规范和首个预发布版本；
+- [ ] 增加执行机构、配电和 Flash 写入默认保护；
+- [ ] 增加单调时间、状态事件和 RTOS 健康监测；
+- [ ] 审计链接内存、heap、BSS 和任务栈；
+- [ ] 用带时间戳的有效性检查替换控制路径中的无限等待；
+- [ ] 建立静态数据主题和非阻塞消息通路；
+- [ ] 将 GF404、ADC、RC 和通信驱动封装到稳定接口后；
+- [ ] 实现 RAM 参数和标准 MAVLink 微服务；
+- [ ] 使用未修改的 QGroundControl 验证基础连接；
+- [ ] 增加可在 PC 上测试的姿态估计；
+- [ ] 增加六旋翼角速度/姿态控制和控制分配；
+- [ ] 建立可重复的 SIL/HIL 故障注入测试；
+- [ ] 完成有记录的断负载上板验证；
+- [ ] 扩展位置控制和其他机型；
+- [ ] 2019.1 实机基线可重复后再迁移 Vitis。
 
-## Versioning and Releases
+## 版本与发布
 
-This project follows [Semantic Versioning](https://semver.org/):
+项目遵循[语义化版本](https://semver.org/lang/zh-CN/)：
 
 ```text
+主版本.次版本.修订版本[-预发布标识]
 MAJOR.MINOR.PATCH[-PRERELEASE]
 ```
 
-- `0.x.y` indicates active development with no stable flight interface guarantee;
-- prerelease identifiers such as `alpha`, `beta`, and `rc` indicate validation
-  maturity;
-- the canonical current version is stored in [`VERSION`](./VERSION);
-- user-visible changes are recorded in [`CHANGELOG.md`](./CHANGELOG.md);
-- release tags use the form `vMAJOR.MINOR.PATCH[-PRERELEASE]`;
-- a release must identify the firmware commit, hardware revision, HDF/bitstream
-  hash, parameter schema, toolchain, and validation level.
+- `0.x.y` 表示处于快速开发期，不保证飞控接口稳定；
+- `alpha`、`beta`、`rc` 等预发布标识表示不同验证成熟度；
+- [`VERSION`](./VERSION) 是当前版本的唯一事实来源；
+- 面向使用者的变化记录在 [`CHANGELOG.md`](./CHANGELOG.md)；
+- 发布标签采用 `vMAJOR.MINOR.PATCH[-PRERELEASE]`；
+- 每个发布版本必须记录固件提交、硬件版本、HDF/bitstream 哈希、参数 schema、
+  工具链和验证等级。
 
-Suggested branch names:
-
-```text
-feature/<short-name>
-fix/<short-name>
-docs/<short-name>
-test/<short-name>
-release/<version>
-```
-
-Suggested commit prefixes follow the Conventional Commits style:
+建议分支命名：
 
 ```text
-feat:     new behavior
-fix:      defect correction
-docs:     documentation only
-refactor: behavior-preserving code change
-test:     tests and test infrastructure
-build:    build system or toolchain
-chore:    repository maintenance
+feature/<简短名称>
+fix/<简短名称>
+docs/<简短名称>
+test/<简短名称>
+release/<版本号>
 ```
 
-See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the required development and safety
-checks.
+提交信息采用 Conventional Commits 风格，类型前缀保持英文，说明使用中文：
 
-## Known Technical Debt
+```text
+feat: 新增功能
+fix: 修复缺陷
+docs: 仅修改文档
+refactor: 不改变行为的重构
+test: 测试或测试基础设施
+build: 构建系统或工具链
+chore: 仓库维护
+```
 
-- FlightControl Release configuration is missing include paths.
-- The linked BSS is unusually large and the linker script reserves a large heap;
-  DDR and memory layout require a dedicated audit.
-- Some task and queue handles are defined in headers rather than declared `extern`.
-- Control and sensor paths contain indefinite FreeRTOS waits.
-- Some MAVLink status values may be used before initialization.
-- Existing code has macro redefinitions, implicit declarations, discarded
-  qualifiers, and unused variables.
-- The current application has minimal runtime diagnostics and no periodic health
-  heartbeat.
+开发和安全检查要求见 [`CONTRIBUTING.md`](./CONTRIBUTING.md)。
 
-Detailed context is available in [`AI_HANDOFF.md`](./AI_HANDOFF.md).
+## 已知技术债
 
-## Contributing
+- FlightControl Release 配置缺少部分 include path；
+- ELF 的 BSS 异常大，链接脚本还保留了较大的 heap，需要专项审计 DDR 和内存布局；
+- 部分任务和队列句柄直接定义在头文件中，没有使用 `extern`；
+- 控制和传感器路径存在 FreeRTOS 无限等待；
+- 部分 MAVLink 状态变量可能在初始化前使用；
+- 现有代码存在宏重复定义、隐式声明、限定符丢失和未使用变量；
+- 当前应用缺少完整的运行诊断和周期健康心跳。
 
-Contributions must preserve the default-safe behavior and keep the legacy
-reference workspace untouched. Every change should include:
+详细工程状态见 [`AI_HANDOFF.md`](./AI_HANDOFF.md)。
 
-- a narrow objective and explicit non-goals;
-- successful Debug build evidence;
-- warning and ELF size comparison;
-- tests for platform-independent logic;
-- an assessment of actuator, power, QSPI, timing, and memory impact;
-- updated documentation and changelog entries when behavior changes.
+## 参与开发
 
-## License
+所有改动必须保持默认安全行为，且不得修改 legacy 只读基线。每个变更至少应包含：
 
-A project-level license has not yet been selected. Do not assume permission to
-redistribute the repository or third-party code beyond the terms already attached
-to individual components. The Xilinx, FreeRTOS, libmetal, and MAVLink-derived
-files may carry their own licenses and notices; these must be preserved.
+- 清晰、单一的目标和明确的非目标；
+- FlightControl Debug 构建证据；
+- warning 和 ELF size 对比；
+- 平台无关逻辑的测试；
+- 对执行机构、配电、QSPI、实时性和内存的影响判断；
+- 行为变化对应的文档和变更记录。
+
+详细规范见 [`CONTRIBUTING.md`](./CONTRIBUTING.md)。
+
+## 许可证
+
+项目尚未选择顶层许可证。在许可证明确以前，不应自行假定可以重新分发本仓库或其中的
+第三方代码。Xilinx、FreeRTOS、libmetal 和 MAVLink 派生文件可能包含各自的许可证与
+版权声明，必须保留并分别遵守。

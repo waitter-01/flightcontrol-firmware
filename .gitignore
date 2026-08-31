@@ -1,4 +1,4 @@
-# Xilinx SDK / Eclipse workspace state
+# Xilinx SDK / Eclipse Workspace 状态
 .metadata/
 .sdk/
 RemoteSystemsTempFiles/
@@ -6,7 +6,7 @@ RemoteSystemsTempFiles/
 webtalk/
 webtalk_*/
 
-# Build outputs
+# 编译输出
 **/Debug/
 **/Release/
 **/build/
@@ -21,17 +21,17 @@ webtalk_*/
 *.lst
 *.size
 
-# SDK-generated BSP trees. Track each BSP project descriptor and system.mss,
-# then regenerate these processor-specific libraries with Xilinx SDK 2019.1.
+# SDK 自动生成的 BSP 目录。仓库保留 BSP 工程描述和 system.mss，
+# 处理器专用库使用 Xilinx SDK 2019.1 重新生成。
 FSBL_bsp/ps7_cortexa9_0/
 FlightControl_bsp/ps7_cortexa9_0/
 
-# Generated or historical boot images (keep .bif source descriptions)
+# 自动生成或历史启动镜像，保留 .bif 描述文件
 bootimage/*.bin
 bootimage/*.BIN
 *.mcs
 
-# Tool logs, journals, and transient reports
+# 工具日志、Journal 和临时报告
 *.log
 *.jou
 *.jrl
@@ -41,10 +41,10 @@ bootimage/*.BIN
 *.xmsgs
 *.html~
 
-# Generated hardware-platform report; keep ps7_init source and Tcl files.
+# 自动生成的硬件平台报告；保留 ps7_init 源文件和 Tcl 文件
 design_top_wrapper_hw_platform_0/ps7_init.html
 
-# Editor and operating-system files
+# 编辑器和操作系统文件
 .vscode/
 .idea/
 *.swp
@@ -56,6 +56,6 @@ design_top_wrapper_hw_platform_0/ps7_init.html
 Thumbs.db
 desktop.ini
 
-# Local migration/cache backups
+# 本地迁移和缓存备份
 *.pre-migration-backup
 *.pre-path-refresh-backup

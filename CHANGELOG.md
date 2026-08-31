@@ -1,43 +1,41 @@
-# Changelog
+# 变更记录
 
-All notable changes to FlightControl Firmware will be documented in this file.
+本文件记录 FlightControl 飞控固件的所有重要变化。
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循
+[语义化版本](https://semver.org/lang/zh-CN/)。
 
-## [Unreleased]
+## [未发布]
 
-No changes yet.
+### 变更
+
+- 将 README、变更记录、开发规范和仓库配置注释统一为中文。
 
 ## [0.1.0-alpha.1] - 2026-08-31
 
-### Added
+### 新增
 
-- Repository-level README with architecture, build, safety, and roadmap guidance.
-- Git ignore and text-normalization rules for a reproducible repository boundary.
-- Canonical `VERSION` file, changelog, and documented release policy.
-- Contribution and safety-check workflow.
-- Recovered Xilinx SDK 2019.1 workspace for the Zynq-7000 hardware platform.
-- Imported hardware platform, FSBL, standalone BSP, FreeRTOS BSP, and
-  FlightControl application projects.
-- Existing ARM application source, board drivers, custom AXI IP drivers, and
-  generated MAVLink headers.
-- Existing HDF and reference FPGA bitstream.
-- Engineering handoff and workspace migration documentation.
+- 增加仓库主页 README，说明架构、构建、安全边界和开发路线；
+- 增加 Git 忽略和文本规范化规则，明确可重复维护的仓库边界；
+- 增加 `VERSION`、变更记录和发布规则；
+- 增加开发贡献与安全检查流程；
+- 恢复面向 Zynq-7000 硬件平台的 Xilinx SDK 2019.1 工作区；
+- 导入硬件平台、FSBL、Standalone BSP、FreeRTOS BSP 和 FlightControl 应用项目；
+- 纳入现有 ARM 应用源码、板级驱动、自定义 AXI IP 驱动和 MAVLink 生成头文件；
+- 纳入现有 HDF 和参考 FPGA bitstream；
+- 增加工程交接和 Workspace 迁移文档。
 
-### Verified
+### 已验证
 
-- Offline build of `FSBL_bsp`.
-- Debug build of `FSBL`.
-- Offline build of `FlightControl_bsp`, including libmetal.
-- Debug build of `FlightControl` in the clean development workspace.
+- `FSBL_bsp` 离线构建；
+- `FSBL` Debug 构建；
+- `FlightControl_bsp` 离线构建，包括 libmetal；
+- `FlightControl` 在独立开发 Workspace 中完成 Debug 构建。
 
-### Known limitations
+### 已知限制
 
-- No successful JTAG or physical hardware validation has been completed for the
-  development workspace.
-- FlightControl Release configuration does not currently build.
-- Actuator, propulsion, power-distribution, and QSPI write paths are not approved
-  for hardware use.
-- Flight-control algorithms are incomplete.
-- The full Vivado source project is not available.
+- 当前开发 Workspace 尚未完成 JTAG 和真实硬件验证；
+- FlightControl Release 配置尚不能成功构建；
+- 执行机构、动力系统、配电和 QSPI 写入路径尚未批准用于硬件测试；
+- 飞行控制算法尚不完整；
+- 缺少完整 Vivado 源工程。

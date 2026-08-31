@@ -1,89 +1,84 @@
-# Contributing to FlightControl Firmware
+# FlightControl 飞控固件开发规范
 
-FlightControl is safety-sensitive embedded software. A successful compilation is
-necessary but is not sufficient evidence that a change is safe or correct.
+FlightControl 属于安全敏感的嵌入式软件。编译成功是必要条件，但不能单独证明改动安全或正确。
 
-## Development Baseline
+## 开发基线
 
-- Develop only in the `flightcontrol-firmware` working tree.
-- Keep the legacy SDK workspace read-only.
-- Use Xilinx SDK 2019.1 unless a dedicated toolchain-migration change is being
-  reviewed.
-- Do not edit generated MAVLink headers directly; update the dialect source and
-  regenerate them.
-- Do not place application logic in generated BSP code.
+- 只在 `flightcontrol-firmware` 工作树中开发；
+- legacy SDK Workspace 保持只读；
+- 除非正在执行独立的工具链迁移任务，否则固定使用 Xilinx SDK 2019.1；
+- 不直接编辑生成的 MAVLink 头文件，应修改方言源文件后重新生成；
+- 不在 BSP 生成代码中编写应用业务逻辑。
 
-## Branches
+## 分支规范
 
-Create focused branches from `main`:
+从 `main` 创建范围明确的分支：
 
 ```text
-feature/<short-name>
-fix/<short-name>
-docs/<short-name>
-test/<short-name>
-release/<version>
+feature/<简短名称>
+fix/<简短名称>
+docs/<简短名称>
+test/<简短名称>
+release/<版本号>
 ```
 
-Keep changes small enough to build, review, and revert independently.
+每个变更应保持足够小，能够独立构建、审查和回退。
 
-## Commits
+## 提交规范
 
-Use an imperative Conventional Commits-style subject:
+提交标题采用 Conventional Commits 风格，类型前缀保持英文，说明使用中文祈使句：
 
 ```text
-feat: add monotonic microsecond time service
-fix: reject stale sensor samples in control task
-docs: document JTAG output channels
-refactor: isolate GF404 parsing from UART driver
-test: add control allocator saturation cases
-build: exclude SDK-generated outputs
+feat: 增加单调微秒时间服务
+fix: 拒绝控制任务中的过期传感器样本
+docs: 说明 JTAG 输出通道
+refactor: 将 GF404 解析与 UART 驱动分离
+test: 增加控制分配器饱和测试
+build: 排除 SDK 自动生成产物
 ```
 
-Do not combine generated workspace noise, formatting changes, and functional
-changes in the same commit.
+不要在同一个提交中混入 Workspace 噪声、批量格式化和功能修改。
 
-## Required Checks
+## 必须完成的检查
 
-Before proposing or merging a functional change:
+提交或合并功能变更前：
 
-- [ ] Build the FlightControl Debug configuration.
-- [ ] Build the FSBL when boot or hardware-platform inputs changed.
-- [ ] Review new and changed compiler warnings.
-- [ ] Record `text`, `data`, and `bss` changes when meaningful.
-- [ ] Run host tests for platform-independent code.
-- [ ] Confirm no new unbounded wait was added to a real-time path.
-- [ ] Confirm no unbounded buffer or runtime allocation was added.
-- [ ] Confirm data has explicit units, frame, timestamp, and validity where needed.
-- [ ] Assess actuator, power-distribution, QSPI, watchdog, and boot impact.
-- [ ] Update `CHANGELOG.md` for user-visible behavior.
-- [ ] Update documentation when interfaces, procedures, or risks change.
+- [ ] 构建 FlightControl Debug 配置；
+- [ ] 启动流程或硬件平台输入变化时构建 FSBL；
+- [ ] 检查新增和变化的编译 warning；
+- [ ] 有明显变化时记录 `text`、`data` 和 `bss`；
+- [ ] 对平台无关代码运行 PC 端测试；
+- [ ] 确认实时路径没有新增无限等待；
+- [ ] 确认没有新增无界缓冲或运行期动态内存申请；
+- [ ] 确认关键数据具有明确的单位、坐标系、时间戳和有效性；
+- [ ] 判断执行机构、配电、QSPI、看门狗和启动流程影响；
+- [ ] 面向使用者的行为变化更新 `CHANGELOG.md`；
+- [ ] 接口、流程或风险变化时同步更新文档。
 
-## Safety Rules
+## 安全规则
 
-Changes that can operate an actuator, switch power, erase/write QSPI, program the
-FPGA, or alter a boot image require explicit review and a separate hardware test
-plan. Tests must begin with hazardous loads disconnected and an immediate physical
-power-removal method available.
+能够操作执行机构、切换配电、擦写 QSPI、配置 FPGA 或修改启动镜像的变更，必须经过
+专项审查并编写独立硬件测试计划。测试必须从危险负载全部断开开始，并保留立即物理断电
+的手段。
 
-Never weaken a safety guard merely to make a test convenient. Add a deliberate,
-auditable test mode with clear entry and timeout behavior instead.
+不得为了测试方便而削弱安全保护。应增加入口明确、可审计并具有超时恢复的专用测试模式。
 
-## Pull Requests
+## 合并请求（Pull Request）要求
 
-A pull request should state:
+Pull Request 应说明：
 
-1. the problem and intended outcome;
-2. what is deliberately out of scope;
-3. affected modules and interfaces;
-4. build and test evidence;
-5. timing, memory, actuator, power, flash, and boot impact;
-6. known limitations and unverified assumptions;
-7. a safe rollback method.
+1. 问题和预期结果；
+2. 明确不在本次范围内的内容；
+3. 受影响的模块和接口；
+4. 构建和测试证据；
+5. 实时性、内存、执行机构、配电、Flash 和启动影响；
+6. 已知限制及尚未验证的假设；
+7. 安全回退方法。
 
-## Versioning
+## 版本管理
 
-The canonical version is in `VERSION`. Releases use Semantic Versioning and Git
-tags in the form `vMAJOR.MINOR.PATCH[-PRERELEASE]`. Do not change the version for
-every commit. Update it as part of a deliberate release change together with the
-changelog and validation record.
+`VERSION` 是当前版本的唯一事实来源。发布版本遵循语义化版本，并使用
+`vMAJOR.MINOR.PATCH[-PRERELEASE]` 格式的 Git 标签。
+
+不应在每次提交时修改版本号。只有执行明确的发布变更时，才同时更新版本号、变更记录和
+验证记录。
