@@ -1,0 +1,6 @@
+//arch = zynq; split = false; format = BIN
+the_ROM_image:
+{
+	[bootloader]C:\Users\wanghaobo\Documents\whb\VTOL\FlightControl\FSBL\Release\FSBL.elf
+	C:\Users\wanghaobo\Documents\whb\VTOL\FlightControl\design_top_wrapper_hw_platform_0\design_top_wrapper.bit
+}

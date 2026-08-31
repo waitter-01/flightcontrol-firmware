@@ -1,0 +1,61 @@
+# Xilinx SDK / Eclipse workspace state
+.metadata/
+.sdk/
+RemoteSystemsTempFiles/
+.Xil/
+webtalk/
+webtalk_*/
+
+# Build outputs
+**/Debug/
+**/Release/
+**/build/
+**/build_libmetal/
+**/build_libmetal.pre-migration-backup/
+*.o
+*.obj
+*.d
+*.a
+*.elf
+*.map
+*.lst
+*.size
+
+# SDK-generated BSP trees. Track each BSP project descriptor and system.mss,
+# then regenerate these processor-specific libraries with Xilinx SDK 2019.1.
+FSBL_bsp/ps7_cortexa9_0/
+FlightControl_bsp/ps7_cortexa9_0/
+
+# Generated or historical boot images (keep .bif source descriptions)
+bootimage/*.bin
+bootimage/*.BIN
+*.mcs
+
+# Tool logs, journals, and transient reports
+*.log
+*.jou
+*.jrl
+*.str
+*.wdb
+*.wcfg
+*.xmsgs
+*.html~
+
+# Generated hardware-platform report; keep ps7_init source and Tcl files.
+design_top_wrapper_hw_platform_0/ps7_init.html
+
+# Editor and operating-system files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
+*.bak
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local migration/cache backups
+*.pre-migration-backup
+*.pre-path-refresh-backup

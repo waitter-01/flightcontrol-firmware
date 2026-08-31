@@ -1,0 +1,21 @@
+# Normalize repository text while keeping hardware and firmware artifacts binary.
+* text=auto
+
+*.c       text eol=lf
+*.h       text eol=lf
+*.S       text eol=lf
+*.ld      text eol=lf
+*.tcl     text eol=lf
+*.xml     text eol=lf
+*.mss     text eol=lf
+*.md      text eol=lf
+*.bif     text eol=lf
+*.project text eol=lf
+*.cproject text eol=lf
+
+*.bit binary
+*.hdf binary
+*.bin binary
+*.elf binary
+*.a   binary
+*.o   binary

@@ -1,0 +1,10 @@
+
+
+OPTION psf_version = 2.1;
+
+BEGIN DRIVER AXI_AD7606
+	OPTION supported_peripherals = (AXI_AD7606);
+	OPTION copyfiles = all;
+	OPTION VERSION = 1.0;
+	OPTION NAME = AXI_AD7606;
+END DRIVER
