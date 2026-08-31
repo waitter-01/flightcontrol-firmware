@@ -7,9 +7,23 @@
 
 ## [未发布]
 
+### 新增
+
+- 增加基于 Micrium Xilinx Repository 1.44 的 `FlightControl_ucos` 模板应用；
+- 增加 μC/OS-III BSP 配置，启用 1 kHz 系统节拍、运行统计、任务栈检查和任务性能统计；
+- 增加可重复注册 Micrium 软件仓库、再生成 BSP 和构建模板工程的 XSCT 脚本；
+- 增加 μC/OS-III 环境搭建、许可边界和后续驱动迁移说明。
+
 ### 变更
 
 - 将 README、变更记录、开发规范和仓库配置注释统一为中文。
+- μC/OS-III 模板的标准输入和标准输出改用 `ps7_uart_0`。
+
+### 已验证
+
+- 使用 Xilinx SDK 2019.1 和 Micrium Xilinx Repository 1.44 生成 μC/OS-III BSP；
+- `FlightControl_ucos_bsp` 离线构建；
+- `FlightControl_ucos` Debug 构建，生成 ARM Cortex-A9 ELF。
 
 ## [0.1.0-alpha.1] - 2026-08-31
 

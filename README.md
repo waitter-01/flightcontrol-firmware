@@ -2,12 +2,13 @@
 
 [![版本](https://img.shields.io/badge/版本-0.1.0--alpha.1-orange)](./VERSION)
 [![平台](https://img.shields.io/badge/平台-Zynq--7000-blue)](#硬件与工具链)
-[![实时系统](https://img.shields.io/badge/实时系统-FreeRTOS-2ea44f)](#硬件与工具链)
+[![实时系统](https://img.shields.io/badge/实时系统-FreeRTOS%20%7C%20μC%2FOS--III-2ea44f)](#硬件与工具链)
 [![状态](https://img.shields.io/badge/状态-飞控开发阶段-red)](#项目状态)
 
 FlightControl 是一个面向 Zynq-7000 SoC 的实验性飞控软件平台。当前代码运行在
-ARM Cortex-A9 处理系统（PS）上，使用 FreeRTOS，并沿用现有 FPGA bitstream 和
-Xilinx SDK 2019.1 硬件平台。
+ARM Cortex-A9 处理系统（PS）上。现有主应用使用 FreeRTOS；仓库同时提供已完成离线
+构建的 μC/OS-III 1.44 模板，作为后续驱动解耦和系统迁移的目标工程。两套工程沿用同一
+FPGA bitstream 和 Xilinx SDK 2019.1 硬件平台。
 
 项目首先建设安全、可测试的 ARM 端飞控基础平台，首个目标机型为六旋翼；后续通过
 机型专用的控制器和控制分配模块扩展固定翼及其他飞行器。
@@ -28,6 +29,9 @@ Xilinx SDK 2019.1 硬件平台。
 | FSBL Debug 构建 | 已验证 |
 | FlightControl FreeRTOS BSP 构建 | 已验证 |
 | FlightControl Debug 构建 | 已验证 |
+| FlightControl μC/OS-III BSP 构建 | 已验证 |
+| FlightControl μC/OS-III 模板构建 | 已验证 |
+| FreeRTOS 驱动向 μC/OS-III 迁移 | 尚未开始 |
 | FlightControl Release 构建 | 尚未修复 |
 | 当前开发工作区 JTAG 链 | 尚未验证 |
 | FPGA 下载与 ELF 运行 | 尚未验证 |
@@ -96,6 +100,10 @@ PWM / CAN ESC / 舵机 / WP40 / 配电控制
 │     ├─ flight_control/              当前 1 ms 控制任务框架
 │     ├─ ucas/                        现有板级和外设驱动
 │     └─ mavlink/                     生成的 MAVLink C 头文件
+├─ FlightControl_ucos_bsp/            μC/OS-III 1.44 BSP 配置
+├─ FlightControl_ucos/                μC/OS-III ARM 模板应用
+├─ scripts/                            环境恢复和构建脚本
+├─ docs/                               专题开发文档
 ├─ bootimage/                         历史 BIF 参考文件
 ├─ AI_HANDOFF.md                      工程状态和安全交接说明
 ├─ MIGRATION_README.md                SDK 工作区迁移记录
@@ -116,7 +124,8 @@ BOOT.BIN。BSP 的工程描述和 `system.mss` 会被跟踪，由 SDK 2019.1 重
 | HDF 器件标识 | `XA7Z020CLG484-1Q` |
 | CPU | `ps7_cortexa9_0` / ARM Cortex-A9 |
 | SDK | Xilinx SDK 2019.1 |
-| 应用操作系统 | `freertos10_xilinx 1.3` |
+| 现有主应用操作系统 | `freertos10_xilinx 1.3` |
+| 迁移模板操作系统 | Micrium `ucos 1.44` |
 | FSBL 操作系统 | `standalone 7.0` |
 | 应用编译器 | ARM GNU，硬浮点配置 |
 | 地面站方向 | QGroundControl + MAVLink 2 |
@@ -167,6 +176,8 @@ D:\Xilinx\SDK\2019.1
 3. `FSBL`
 4. `FlightControl_bsp`
 5. `FlightControl`
+6. `FlightControl_ucos_bsp`
+7. `FlightControl_ucos`
 
 ### 4. 构建工程
 
@@ -177,16 +188,21 @@ D:\Xilinx\SDK\2019.1
 3. 首次克隆后生成/构建 `FlightControl_bsp`，需要时重新生成；
 4. 使用 Debug 配置构建 `FlightControl`。
 
+μC/OS-III 工程需要先在 SDK 中注册本地 Micrium Xilinx Repository 1.44。推荐使用
+[`scripts/setup_ucos3.ps1`](./scripts/setup_ucos3.ps1) 自动恢复环境、重新生成 BSP 并构建；
+完整说明见 [`docs/UCOS3_环境与模板工程.md`](./docs/UCOS3_环境与模板工程.md)。
+
 预期本地产物：
 
 ```text
 FSBL/Debug/FSBL.elf
 FlightControl/Debug/FlightControl.elf
 FlightControl_bsp/ps7_cortexa9_0/lib/libmetal.a
+FlightControl_ucos/Debug/FlightControl_ucos.elf
 ```
 
-这些产物不会进入 Git。命令行可重复构建脚本仍在计划中；在脚本完成以前，修改项目或 BSP
-配置时应保存 SDK Console 的完整构建输出。
+这些产物不会进入 Git。μC/OS-III 已提供命令行恢复和构建脚本；现有 FreeRTOS 主工程仍按
+上述 SDK 构建顺序维护。修改项目或 BSP 配置时应保存 SDK Console 的完整构建输出。
 
 ## 运行说明
 
@@ -220,6 +236,8 @@ FlightControl_bsp/ps7_cortexa9_0/lib/libmetal.a
 - [x] 恢复 SDK 2019.1 离线 Debug 构建基线；
 - [x] 建立与 legacy 对照区分离的开发工作区；
 - [x] 建立 GitHub 仓库、版本规范和首个预发布版本；
+- [x] 建立 μC/OS-III 1.44 BSP、模板应用和可重复构建脚本；
+- [ ] 建立独立驱动接口并迁移首批只读/诊断驱动；
 - [ ] 增加执行机构、配电和 Flash 写入默认保护；
 - [ ] 增加单调时间、状态事件和 RTOS 健康监测；
 - [ ] 审计链接内存、heap、BSS 和任务栈；
@@ -304,5 +322,6 @@ chore: 仓库维护
 ## 许可证
 
 项目尚未选择顶层许可证。在许可证明确以前，不应自行假定可以重新分发本仓库或其中的
-第三方代码。Xilinx、FreeRTOS、libmetal 和 MAVLink 派生文件可能包含各自的许可证与
-版权声明，必须保留并分别遵守。
+第三方代码。Xilinx、FreeRTOS、libmetal、MAVLink 和 Micrium 派生文件可能包含各自的
+许可证与版权声明，必须保留并分别遵守。Micrium 源码不进入本仓库，商业使用 μC/OS-III
+前必须确认具备有效授权。

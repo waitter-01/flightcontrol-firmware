@@ -25,6 +25,7 @@ webtalk_*/
 # 处理器专用库使用 Xilinx SDK 2019.1 重新生成。
 FSBL_bsp/ps7_cortexa9_0/
 FlightControl_bsp/ps7_cortexa9_0/
+FlightControl_ucos_bsp/ps7_cortexa9_0/
 
 # 自动生成或历史启动镜像，保留 .bif 描述文件
 bootimage/*.bin
