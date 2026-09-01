@@ -32,7 +32,7 @@ FPGA bitstream 和 Xilinx SDK 2019.1 硬件平台。
 | FlightControl μC/OS-III BSP 构建 | 已验证 |
 | FlightControl μC/OS-III 模板构建 | 已验证 |
 | μC/OS-III 基础分层与安全门 | 已完成 |
-| FreeRTOS 外设驱动向 μC/OS-III 迁移 | 第三阶段已完成 |
+| FreeRTOS 外设驱动向 μC/OS-III 迁移 | 第四阶段已完成 |
 | FlightControl Release 构建 | 尚未修复 |
 | 当前开发工作区 JTAG 链 | 尚未验证 |
 | FPGA 下载与 ELF 运行 | 尚未验证 |

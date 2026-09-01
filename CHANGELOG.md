@@ -16,6 +16,8 @@
 - 增加 AXI IIC、Micrium PS UART、AD7606 只读驱动和通用驱动统计；
 - 对当前 HDF 不存在的普通 SPI 控制器提供明确的不支持结果；
 - 增加带超时的 PS CAN 驱动和非阻塞 PL UART FIFO 驱动；
+- 增加带单位、坐标系、时间戳和有效标志的统一输入数据模型；
+- 增加固定内存输入快照仓库、SBUS 解析器和 GF404 有界分帧器；
 - 增加基于 Micrium Xilinx Repository 1.44 的 `FlightControl_ucos` 模板应用；
 - 增加 μC/OS-III BSP 配置，启用 1 kHz 系统节拍、运行统计、任务栈检查和任务性能统计；
 - 增加可重复注册 Micrium 软件仓库、再生成 BSP 和构建模板工程的 XSCT 脚本；
