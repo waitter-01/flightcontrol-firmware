@@ -7,6 +7,9 @@
 #include "platform/platform_log.h"
 #include "platform/platform_time.h"
 #include "services/health_monitor.h"
+#include "services/input_store.h"
+#include "services/output_arbiter.h"
+#include "services/parameter_store.h"
 
 #define APP_HEARTBEAT_PERIOD_MS        1000u
 #define APP_HEALTH_TIMEOUT_MS          2500u
@@ -56,6 +59,21 @@ static fc_status_t AppPlatformInit(void)
     }
 
     status = fc_health_init();
+    if (status != FC_STATUS_OK) {
+        return status;
+    }
+
+    status = fc_input_store_init();
+    if (status != FC_STATUS_OK) {
+        return status;
+    }
+
+    status = fc_parameter_store_init();
+    if (status != FC_STATUS_OK) {
+        return status;
+    }
+
+    status = fc_output_arbiter_init();
     if (status != FC_STATUS_OK) {
         return status;
     }

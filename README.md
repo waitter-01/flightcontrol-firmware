@@ -32,12 +32,12 @@ FPGA bitstream 和 Xilinx SDK 2019.1 硬件平台。
 | FlightControl μC/OS-III BSP 构建 | 已验证 |
 | FlightControl μC/OS-III 模板构建 | 已验证 |
 | μC/OS-III 基础分层与安全门 | 已完成 |
-| FreeRTOS 外设驱动向 μC/OS-III 迁移 | 第四阶段已完成 |
+| FreeRTOS 外设驱动向 μC/OS-III 迁移 | 软件迁移阶段已完成，待硬件验证 |
 | FlightControl Release 构建 | 尚未修复 |
 | 当前开发工作区 JTAG 链 | 尚未验证 |
 | FPGA 下载与 ELF 运行 | 尚未验证 |
 | 传感器和板级 I/O 实机验证 | 尚未验证 |
-| 执行机构和动力输出 | 禁止测试/尚未批准 |
+| 执行机构和动力输出 | 安全仲裁已完成，硬件后端保持锁定 |
 | 飞行控制算法 | 姿态估计、PID 和六旋翼控制分配已完成离线实现 |
 | QGroundControl 集成 | MAVLink 基础接口已完成，待联机验证 |
 | Vitis 2024.2 迁移 | 暂缓 |
