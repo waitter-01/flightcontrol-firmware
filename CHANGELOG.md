@@ -15,6 +15,7 @@
 - 增加主要函数的中文 Doxygen 注释规范；
 - 增加 AXI IIC、Micrium PS UART、AD7606 只读驱动和通用驱动统计；
 - 对当前 HDF 不存在的普通 SPI 控制器提供明确的不支持结果；
+- 增加带超时的 PS CAN 驱动和非阻塞 PL UART FIFO 驱动；
 - 增加基于 Micrium Xilinx Repository 1.44 的 `FlightControl_ucos` 模板应用；
 - 增加 μC/OS-III BSP 配置，启用 1 kHz 系统节拍、运行统计、任务栈检查和任务性能统计；
 - 增加可重复注册 Micrium 软件仓库、再生成 BSP 和构建模板工程的 XSCT 脚本；
