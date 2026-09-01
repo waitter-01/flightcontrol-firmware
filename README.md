@@ -32,7 +32,7 @@ FPGA bitstream 和 Xilinx SDK 2019.1 硬件平台。
 | FlightControl μC/OS-III BSP 构建 | 已验证 |
 | FlightControl μC/OS-III 模板构建 | 已验证 |
 | μC/OS-III 基础分层与安全门 | 已完成 |
-| FreeRTOS 外设驱动向 μC/OS-III 迁移 | 软件迁移阶段已完成，待硬件验证 |
+| FreeRTOS 外设驱动向 μC/OS-III 迁移 | 独立接口与安全骨架完成，设备映射待验证 |
 | FlightControl Release 构建 | 尚未修复 |
 | 当前开发工作区 JTAG 链 | 尚未验证 |
 | FPGA 下载与 ELF 运行 | 尚未验证 |
@@ -51,6 +51,9 @@ FPGA bitstream 和 Xilinx SDK 2019.1 硬件平台。
 5. 实现标准 MAVLink 服务和 QGroundControl 连接；
 6. 增加可在 PC 上测试的状态估计和六旋翼控制模块；
 7. 在带动力硬件测试前完成 SIL/HIL 验证。
+
+完整阶段结果见 [`docs/UCOS3_开发阶段总览.md`](./docs/UCOS3_开发阶段总览.md)，最后统一测试时
+按 [`docs/统一上机测试计划.md`](./docs/统一上机测试计划.md) 从断负载 JTAG 验证开始逐级执行。
 
 ## 总体架构
 

@@ -1,11 +1,14 @@
 # FlightControl 飞控开发当前进度与 AI 交接
 
-> 更新时间：2026-08-31  
-> 当前阶段：SDK 2019.1 离线构建基线已跑通；独立飞控开发副本已建立；JTAG 与真实硬件尚未验证成功。
+> 更新时间：2026-09-01
+> 当前阶段：μC/OS-III 七个离线软件阶段已完成；JTAG、真实硬件、执行机构和飞行均未验证。
 
 ## 1. 一句话状态
 
-后续只使用 `D:\ZynqWork\flightcontrol-dev-2019.1\FlightControl` 开发。该工作区的五个 SDK 项目已经重新导入，FSBL、两个 BSP 和 FlightControl Debug 都能在新路径独立构建。此前 Program FPGA 报告找不到本地 FPGA，此后还没有完成新的 JTAG 链验证，也没有下载或运行当前 FlightControl ELF，因此不能声称板卡已经正常工作。
+后续只使用 `D:\ZynqWork\flightcontrol-dev-2019.1\FlightControl` 开发。FreeRTOS 基线继续保留，新增的 `FlightControl_ucos` 和 `FlightControl_ucos_bsp` 已完成离线构建。μC/OS-III 工程具备独立驱动、输入数据模型、MAVLink/参数基础服务、姿态估计、PID、六旋翼混控和输出安全仲裁，但没有下载或运行当前 ELF，因此不能声称板卡或飞控已经正常工作。
+
+最新开发总览见 `docs/UCOS3_开发阶段总览.md`，统一硬件验收步骤见
+`docs/统一上机测试计划.md`。当前分支为 `feature/ucos3-port`，按阶段保留小提交并推送。
 
 ## 2. 关键目录
 
@@ -241,4 +244,3 @@ Free heap: ... bytes
 - 修改 BSP 时区分生成文件与驱动源模板，避免 regenerate 后丢失修复。
 - 修改飞控逻辑前先审计输出默认状态和初始化调用链。
 - SDK 再出现 CDT 错误时，正常退出后用 `-workspace ... -eclipseargs -clean` 重启。
-

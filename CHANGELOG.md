@@ -43,6 +43,9 @@
 - `FlightControl_ucos` Debug 构建，生成 ARM Cortex-A9 ELF。
 - 新增基础层和健康监测任务在 ARM GNU Debug 配置下无新增编译警告；
 - 安全检查未发现 GPIO 输出、配电/继电器、执行机构、QSPI 写入或硬件看门狗启动调用。
+- 完成七个 μC/OS-III 软件开发阶段的 ARM GNU `-Wall -Wextra` 离线编译和链接；
+- 最终 Debug ELF 为 `text 123224 B`、`data 2708 B`、`bss 42480 B`；
+- 增加统一上机测试计划，明确离线完成与真实硬件验证的边界。
 
 ## [0.1.0-alpha.1] - 2026-08-31
 
