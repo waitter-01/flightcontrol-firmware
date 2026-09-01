@@ -12,6 +12,8 @@
 *.bif     text eol=lf
 *.project text eol=lf
 *.cproject text eol=lf
+*.prefs   text eol=lf
+.editorconfig text eol=lf
 
 *.bit binary
 *.hdf binary
