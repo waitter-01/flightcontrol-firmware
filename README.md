@@ -39,7 +39,7 @@ FPGA bitstream 和 Xilinx SDK 2019.1 硬件平台。
 | 传感器和板级 I/O 实机验证 | 尚未验证 |
 | 执行机构和动力输出 | 禁止测试/尚未批准 |
 | 飞行控制算法 | 仅有初始框架 |
-| QGroundControl 集成 | 计划中 |
+| QGroundControl 集成 | MAVLink 基础接口已完成，待联机验证 |
 | Vitis 2024.2 迁移 | 暂缓 |
 
 近期开发优先级：
