@@ -23,12 +23,24 @@ static void AppStartTask(void *argument);
 static void AppHealthTask(void *argument);
 static fc_status_t AppPlatformInit(void);
 
+/**
+ * @brief μC/OS-III 飞控程序入口。
+ *
+ * @return 正常情况下不会返回；若内核启动意外返回则返回 0。
+ * @note 入口只把控制权交给 Micrium 启动流程，不直接操作板级外设。
+ */
 int main(void)
 {
     UCOSStartup(AppStartTask);
     return 0;
 }
 
+/**
+ * @brief 按安全顺序初始化平台公共服务。
+ *
+ * @return 所有基础服务就绪返回 FC_STATUS_OK，否则返回首个失败状态。
+ * @note 本函数保持危险输出锁定，并且不会启动硬件看门狗后端。
+ */
 static fc_status_t AppPlatformInit(void)
 {
     fc_status_t status;
@@ -58,6 +70,12 @@ static fc_status_t AppPlatformInit(void)
     return fc_watchdog_prepare(3000u);
 }
 
+/**
+ * @brief 创建健康监测任务并维持主应用心跳。
+ *
+ * @param argument Micrium 任务参数，当前未使用。
+ * @note 运行于任务上下文；任何初始化或调度错误都会锁存安全故障。
+ */
 static void AppStartTask(void *argument)
 {
     OS_ERR os_error;
@@ -142,6 +160,12 @@ static void AppStartTask(void *argument)
     }
 }
 
+/**
+ * @brief 周期检查关键组件心跳并触发故障锁定。
+ *
+ * @param argument Micrium 任务参数，当前未使用。
+ * @note 运行于任务上下文；检测到超时后只允许进入更安全的锁定状态。
+ */
 static void AppHealthTask(void *argument)
 {
     OS_ERR os_error;

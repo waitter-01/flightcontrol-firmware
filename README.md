@@ -32,7 +32,7 @@ FPGA bitstream 和 Xilinx SDK 2019.1 硬件平台。
 | FlightControl μC/OS-III BSP 构建 | 已验证 |
 | FlightControl μC/OS-III 模板构建 | 已验证 |
 | μC/OS-III 基础分层与安全门 | 已完成 |
-| FreeRTOS 外设驱动向 μC/OS-III 迁移 | 第一阶段进行中 |
+| FreeRTOS 外设驱动向 μC/OS-III 迁移 | 第二阶段已完成 |
 | FlightControl Release 构建 | 尚未修复 |
 | 当前开发工作区 JTAG 链 | 尚未验证 |
 | FPGA 下载与 ELF 运行 | 尚未验证 |
@@ -200,6 +200,8 @@ D:\Xilinx\SDK\2019.1
 完整说明见 [`docs/UCOS3_环境与模板工程.md`](./docs/UCOS3_环境与模板工程.md)。
 驱动分层、安全门和上机前检查见
 [`docs/UCOS3_驱动解耦第一阶段.md`](./docs/UCOS3_驱动解耦第一阶段.md)。
+硬件资源表、统一中断和只读 GPIO 规则见
+[`docs/UCOS3_第二阶段_硬件资源与中断GPIO.md`](./docs/UCOS3_第二阶段_硬件资源与中断GPIO.md)。
 
 预期本地产物：
 
