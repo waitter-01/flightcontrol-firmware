@@ -15,6 +15,7 @@ $sdkPath = (Resolve-Path -LiteralPath $SdkRoot).Path
 $micriumPath = (Resolve-Path -LiteralPath $MicriumRepository).Path
 $xsctPath = Join-Path $sdkPath 'bin\xsct.bat'
 $tclPath = Join-Path $PSScriptRoot 'setup_ucos3.tcl'
+$safetyCheckPath = Join-Path $PSScriptRoot 'check_ucos3_safety.ps1'
 $javaHomePath = Join-Path $workspacePath '.metadata\xilinx-user-home'
 
 if (-not (Test-Path -LiteralPath $xsctPath -PathType Leaf)) {
@@ -23,6 +24,11 @@ if (-not (Test-Path -LiteralPath $xsctPath -PathType Leaf)) {
 
 if (-not (Test-Path -LiteralPath (Join-Path $micriumPath 'sw_apps\helloworld_osiii'))) {
     throw 'MicriumRepository 必须指向包含 sw_apps、components 和 drivers 的 ucos 子目录。'
+}
+
+& $safetyCheckPath
+if ($LASTEXITCODE -ne 0) {
+    throw 'μC/OS-III 源码安全检查失败。'
 }
 
 New-Item -ItemType Directory -Path $javaHomePath -Force | Out-Null

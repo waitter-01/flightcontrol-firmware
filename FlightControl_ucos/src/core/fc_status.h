@@ -1,0 +1,15 @@
+#ifndef FC_STATUS_H
+#define FC_STATUS_H
+
+typedef enum {
+    FC_STATUS_OK = 0,
+    FC_STATUS_INVALID_ARGUMENT = -1,
+    FC_STATUS_INVALID_STATE = -2,
+    FC_STATUS_TIMEOUT = -3,
+    FC_STATUS_NOT_SUPPORTED = -4,
+    FC_STATUS_LOCKED = -5,
+    FC_STATUS_PLATFORM_ERROR = -6,
+    FC_STATUS_NO_RESOURCE = -7
+} fc_status_t;
+
+#endif

@@ -13,6 +13,11 @@
 - 增加 μC/OS-III BSP 配置，启用 1 kHz 系统节拍、运行统计、任务栈检查和任务性能统计；
 - 增加可重复注册 Micrium 软件仓库、再生成 BSP 和构建模板工程的 XSCT 脚本；
 - 增加 μC/OS-III 环境搭建、许可边界和后续驱动迁移说明。
+- 建立 `core`、`platform`、`bsp`、`drivers`、`services` 五层 ARM 软件骨架；
+- 增加基于 Zynq 全局定时器的单调时间接口和 μC/OS-III 分级日志接口；
+- 增加默认锁定的板级安全状态机、组件心跳监测和健康监测任务；
+- 增加硬件看门狗受控适配接口，当前版本明确禁止启动硬件后端；
+- 增加 μC/OS-III 危险硬件调用静态检查脚本。
 
 ### 变更
 
@@ -24,6 +29,8 @@
 - 使用 Xilinx SDK 2019.1 和 Micrium Xilinx Repository 1.44 生成 μC/OS-III BSP；
 - `FlightControl_ucos_bsp` 离线构建；
 - `FlightControl_ucos` Debug 构建，生成 ARM Cortex-A9 ELF。
+- 新增基础层和健康监测任务在 ARM GNU Debug 配置下无新增编译警告；
+- 安全检查未发现 GPIO 输出、配电/继电器、执行机构、QSPI 写入或硬件看门狗启动调用。
 
 ## [0.1.0-alpha.1] - 2026-08-31
 

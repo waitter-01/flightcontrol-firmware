@@ -54,11 +54,9 @@ if {$should_build} {
         exit 3
     }
 
-    # 全新克隆时先让 SDK/CDT 生成 Debug Makefile。SDK 后台进程可能仍保留旧
-    # PATH，因此最终应用构建显式调用随 SDK 安装的预构建步骤和 GNU Make。
-    if {![file exists $app_makefile]} {
-        projects -build -type app -name FlightControl_ucos
-    }
+    # 让 SDK/CDT 刷新 Debug Makefile和递归源码清单。SDK 后台进程可能仍保留
+    # 旧 PATH，因此最终应用构建显式调用随 SDK 安装的预构建步骤和 GNU Make。
+    projects -build -type app -name FlightControl_ucos
 
     if {![file exists $app_makefile]} {
         puts stderr "应用 Makefile 未生成：$app_makefile"

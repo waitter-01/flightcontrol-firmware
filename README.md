@@ -31,7 +31,8 @@ FPGA bitstream 和 Xilinx SDK 2019.1 硬件平台。
 | FlightControl Debug 构建 | 已验证 |
 | FlightControl μC/OS-III BSP 构建 | 已验证 |
 | FlightControl μC/OS-III 模板构建 | 已验证 |
-| FreeRTOS 驱动向 μC/OS-III 迁移 | 尚未开始 |
+| μC/OS-III 基础分层与安全门 | 已完成 |
+| FreeRTOS 外设驱动向 μC/OS-III 迁移 | 第一阶段进行中 |
 | FlightControl Release 构建 | 尚未修复 |
 | 当前开发工作区 JTAG 链 | 尚未验证 |
 | FPGA 下载与 ELF 运行 | 尚未验证 |
@@ -102,6 +103,12 @@ PWM / CAN ESC / 舵机 / WP40 / 配电控制
 │     └─ mavlink/                     生成的 MAVLink C 头文件
 ├─ FlightControl_ucos_bsp/            μC/OS-III 1.44 BSP 配置
 ├─ FlightControl_ucos/                μC/OS-III ARM 模板应用
+│  └─ src/
+│     ├─ core/                        公共状态码
+│     ├─ platform/                    单调时间和日志
+│     ├─ bsp/                         板级安全状态
+│     ├─ drivers/                     独立硬件驱动适配
+│     └─ services/                    健康监测等公共服务
 ├─ scripts/                            环境恢复和构建脚本
 ├─ docs/                               专题开发文档
 ├─ bootimage/                         历史 BIF 参考文件
@@ -191,6 +198,8 @@ D:\Xilinx\SDK\2019.1
 μC/OS-III 工程需要先在 SDK 中注册本地 Micrium Xilinx Repository 1.44。推荐使用
 [`scripts/setup_ucos3.ps1`](./scripts/setup_ucos3.ps1) 自动恢复环境、重新生成 BSP 并构建；
 完整说明见 [`docs/UCOS3_环境与模板工程.md`](./docs/UCOS3_环境与模板工程.md)。
+驱动分层、安全门和上机前检查见
+[`docs/UCOS3_驱动解耦第一阶段.md`](./docs/UCOS3_驱动解耦第一阶段.md)。
 
 预期本地产物：
 
@@ -237,7 +246,9 @@ FlightControl_ucos/Debug/FlightControl_ucos.elf
 - [x] 建立与 legacy 对照区分离的开发工作区；
 - [x] 建立 GitHub 仓库、版本规范和首个预发布版本；
 - [x] 建立 μC/OS-III 1.44 BSP、模板应用和可重复构建脚本；
-- [ ] 建立独立驱动接口并迁移首批只读/诊断驱动；
+- [x] 建立独立驱动接口、单调时间、日志、安全门和健康监测；
+- [ ] 断负载验证基础模板的串口、Tick、任务调度和全局定时器；
+- [ ] 在硬件资源表确认后实现 GPIO 输入、LED 和硬件看门狗后端；
 - [ ] 增加执行机构、配电和 Flash 写入默认保护；
 - [ ] 增加单调时间、状态事件和 RTOS 健康监测；
 - [ ] 审计链接内存、heap、BSS 和任务栈；
