@@ -9,7 +9,10 @@ typedef enum {
     FC_STATUS_NOT_SUPPORTED = -4,
     FC_STATUS_LOCKED = -5,
     FC_STATUS_PLATFORM_ERROR = -6,
-    FC_STATUS_NO_RESOURCE = -7
+    FC_STATUS_NO_RESOURCE = -7,
+    FC_STATUS_BUSY = -8,
+    FC_STATUS_DATA_INVALID = -9,
+    FC_STATUS_OVERFLOW = -10
 } fc_status_t;
 
 #endif
