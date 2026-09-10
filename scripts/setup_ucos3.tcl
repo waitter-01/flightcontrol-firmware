@@ -31,13 +31,6 @@ configbsp -bsp FlightControl_ucos_bsp OS_CFG_TASK_PROFILE_EN true
 configbsp -bsp FlightControl_ucos_bsp OS_CFG_SCHED_LOCK_TIME_MEAS_EN true
 configbsp -bsp FlightControl_ucos_bsp OS_CFG_TS_EN true
 
-# 当前本机 SDK 2019.1 的 gpiops_v3_5 引用了较新平台枚举，而 Micrium 1.44
-# 的 ucos_standalone 尚未定义它。Zynq-7000 不会进入该分支，此宏仅用于兼容编译。
-set compiler_flags [configbsp -bsp FlightControl_ucos_bsp extra_compiler_flags]
-if {[string first "-DXPLAT_versal=5" $compiler_flags] < 0} {
-    configbsp -bsp FlightControl_ucos_bsp -append extra_compiler_flags "-DXPLAT_versal=5"
-}
-
 regenbsp -bsp FlightControl_ucos_bsp
 
 if {$should_build} {

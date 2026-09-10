@@ -8,7 +8,8 @@
 
 #include "../core/fc_status.h"
 
-typedef void (*fc_irq_handler_t)(void *context, CPU_INT32U interrupt_id);
+/** v1.45 统一采用 Xilinx 单参数中断回调签名。 */
+typedef void (*fc_irq_handler_t)(void *context);
 
 /** 中断触发方式。 */
 typedef enum {
@@ -29,7 +30,7 @@ typedef struct {
 /**
  * @brief 将外设中断挂接到 μC/OS-III 已初始化的 GIC。
  *
- * @param config 中断号、优先级、目标 CPU、触发方式和回调。
+ * @param config 中断号、优先级、目标 CPU、触发方式、单参数回调及上下文。
  * @return 注册并使能成功返回 FC_STATUS_OK，否则返回平台错误。
  * @warning 该接口不会重新初始化 GIC；回调运行于中断上下文，不得阻塞、动态分配内存或写日志。
  */

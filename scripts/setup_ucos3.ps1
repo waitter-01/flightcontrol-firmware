@@ -46,8 +46,22 @@ $toolPaths = @(
 $env:Path = ($toolPaths -join ';') + ';' + $env:Path
 
 $buildFlag = if ($SkipBuild) { '0' } else { '1' }
-& $xsctPath $tclPath $workspacePath $micriumPath $sdkPath $buildFlag
+$buildStartedAt = Get-Date
+$xsctOutput = @(& $xsctPath $tclPath $workspacePath $micriumPath $sdkPath $buildFlag 2>&1)
+$xsctExitCode = $LASTEXITCODE
+$xsctOutput | ForEach-Object { Write-Host $_ }
 
-if ($LASTEXITCODE -ne 0) {
-    throw "μC/OS-III 工程配置失败，XSCT 退出码：$LASTEXITCODE"
+if (($xsctExitCode -ne 0) -or ($xsctOutput -match '^ERROR:')) {
+    throw "μC/OS-III 工程配置失败，XSCT 退出码：$xsctExitCode"
+}
+
+if (-not $SkipBuild) {
+    $elfPath = Join-Path $workspacePath 'FlightControl_ucos\Debug\FlightControl_ucos.elf'
+    if (-not (Test-Path -LiteralPath $elfPath -PathType Leaf)) {
+        throw "μC/OS-III 应用 ELF 未生成：$elfPath"
+    }
+
+    if ((Get-Item -LiteralPath $elfPath).LastWriteTime -lt $buildStartedAt) {
+        throw "μC/OS-III 应用 ELF 不是本次构建生成：$elfPath"
+    }
 }
