@@ -1,21 +1,23 @@
 # FlightControl 飞控开发当前进度与 AI 交接
 
-> 更新时间：2026-09-01
+> 更新时间：2026-09-10
 > 当前阶段：μC/OS-III 七个离线软件阶段已完成；JTAG、真实硬件、执行机构和飞行均未验证。
 
 ## 1. 一句话状态
 
-后续只使用 `D:\ZynqWork\flightcontrol-dev-2019.1\FlightControl` 开发。FreeRTOS 基线继续保留，新增的 `FlightControl_ucos` 和 `FlightControl_ucos_bsp` 已完成离线构建。μC/OS-III 工程具备独立驱动、输入数据模型、MAVLink/参数基础服务、姿态估计、PID、六旋翼混控和输出安全仲裁，但没有下载或运行当前 ELF，因此不能声称板卡或飞控已经正常工作。
+后续 μC/OS-III 开发只使用 `D:\ZynqWork\flightcontrol-ucos145`。原 FreeRTOS 与 μC/OS-III 1.44 工作区继续保留用于对照，新工作区中的 `FlightControl_ucos` 和 `FlightControl_ucos_bsp` 已基于 Micrium Xilinx Repository 1.45 完成离线构建。该工程具备独立驱动、输入数据模型、MAVLink/参数基础服务、姿态估计、PID、六旋翼混控和输出安全仲裁，但没有下载或运行当前 ELF，因此不能声称板卡或飞控已经正常工作。
 
 最新开发总览见 `docs/UCOS3_开发阶段总览.md`，统一硬件验收步骤见
-`docs/统一上机测试计划.md`。当前分支为 `feature/ucos3-port`，按阶段保留小提交并推送。
+`docs/统一上机测试计划.md`。当前分支为 `feature/ucos145-migration`，按阶段保留小提交并推送。
 
 ## 2. 关键目录
 
 | 目录 | 内容 | 使用规则 |
 |---|---|---|
 | `D:\ZynqWork\legacy-2019.1\FlightControl` | 已修复并验证过的 2019.1 基线 | 只读对照和回退，不在这里继续开发 |
-| `D:\ZynqWork\flightcontrol-dev-2019.1\FlightControl` | 当前飞控开发工作区 | 后续修改、构建和调试都在这里 |
+| `D:\ZynqWork\flightcontrol-ucos145` | 当前 μC/OS-III 1.45 开发工作区 | 后续 μC/OS-III 修改、构建和调试都在这里 |
+| `D:\ZynqWork\flightcontrol-dev-2019.1\FlightControl` | μC/OS-III 1.44 与 FreeRTOS 对照工作区 | 保留对照，不继续开展 1.45 开发 |
+| `D:\ZynqWork\ucos_v1_45\ucos` | Micrium Xilinx Repository 1.45 | 当前 BSP 与库的生成来源 |
 | `D:\飞控资料\敏捷飞控资料` | 开发板、敏捷飞控等用户资料 | 核对供电、接口、针脚和板卡使用方法 |
 | `D:\飞控资料\Xilinx\_Vivado\_SDK\_2018.3\_1207\_2324` | 另一份 2018.3 归档 | 尚未确认是否为完整原工程，不作为当前输入 |
 | `D:\Xilinx\SDK\2019.1` | 当前实际使用的 SDK | 编译器、XSCT、Eclipse SDK 均从这里运行 |
@@ -24,7 +26,7 @@
 
 ## 3. 开发工作区内部结构
 
-根目录：`D:\ZynqWork\flightcontrol-dev-2019.1\FlightControl`
+根目录：`D:\ZynqWork\flightcontrol-ucos145`
 
 | 子目录/文件 | 作用 | 注意事项 |
 |---|---|---|
@@ -78,7 +80,7 @@
 
 ```powershell
 & 'D:\Xilinx\SDK\2019.1\bin\xsdk.bat' `
-  -workspace 'D:\ZynqWork\flightcontrol-dev-2019.1\FlightControl' `
+  -workspace 'D:\ZynqWork\flightcontrol-ucos145' `
   -eclipseargs -clean
 ```
 
@@ -234,7 +236,7 @@ Free heap: ... bytes
 
 ## 10. 给下一个 AI 的约束
 
-- 默认只修改 `D:\ZynqWork\flightcontrol-dev-2019.1\FlightControl`。
+- 默认只修改 `D:\ZynqWork\flightcontrol-ucos145`。
 - 不覆盖、不清理 `D:\ZynqWork\legacy-2019.1\FlightControl`。
 - 不要同时把两个目录当成同一个 SDK Workspace。
 - 五个 SDK 项目名故意保持原名，暂不重命名。

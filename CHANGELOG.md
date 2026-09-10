@@ -7,6 +7,34 @@
 
 ## [未发布]
 
+## [0.2.0-alpha.1] - 2026-09-10
+
+### 新增
+
+- 建立独立工作区 `D:\ZynqWork\flightcontrol-ucos145`；
+- 建立独立分支 `feature/ucos145-migration`；
+- 增加 μC/OS-III 1.45 专项迁移说明。
+
+### 变更
+
+- 将 Micrium Xilinx Repository 基线从 1.44 升级到 1.45；
+- 将 μC/OS-III 内核从 3.07.04 升级到 3.07.05；
+- 按 v1.45 模型将 L2 cache 和 SCU 映射为 `generic 2.0`，SCU timer 映射为 `scutimer 2.1`；
+- 将统一中断适配器改为 v1.45 的 Xilinx 单参数回调签名；
+- 删除 v1.44 所需的 `XPLAT_versal` 临时兼容宏；
+- 构建脚本现在能识别 XSCT 输出错误，并验证 ELF 确实由本次构建生成。
+
+### 已验证
+
+- 使用 Xilinx SDK 2019.1 和 Micrium Xilinx Repository 1.45 重新生成 BSP；
+- `FlightControl_ucos_bsp` 和 `FlightControl_ucos` Debug 构建通过；
+- 最终 ELF 为 `text 127432 B`、`data 2508 B`、`bss 41312 B`；
+- 安全扫描未发现危险输出、Flash 写入或硬件看门狗启动调用。
+
+### 未验证
+
+- 尚未进行 J-Link、FPGA、串口、传感器、执行机构或飞行测试。
+
 ### 新增
 
 - 增加由当前 HDF 固化的板级硬件资源表和风险等级；

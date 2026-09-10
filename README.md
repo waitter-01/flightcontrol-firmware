@@ -1,13 +1,13 @@
 # FlightControl 飞控固件
 
-[![版本](https://img.shields.io/badge/版本-0.1.0--alpha.1-orange)](./VERSION)
+[![版本](https://img.shields.io/badge/版本-0.2.0--alpha.1-orange)](./VERSION)
 [![平台](https://img.shields.io/badge/平台-Zynq--7000-blue)](#硬件与工具链)
 [![实时系统](https://img.shields.io/badge/实时系统-FreeRTOS%20%7C%20μC%2FOS--III-2ea44f)](#硬件与工具链)
 [![状态](https://img.shields.io/badge/状态-飞控开发阶段-red)](#项目状态)
 
 FlightControl 是一个面向 Zynq-7000 SoC 的实验性飞控软件平台。当前代码运行在
 ARM Cortex-A9 处理系统（PS）上。现有主应用使用 FreeRTOS；仓库同时提供已完成离线
-构建的 μC/OS-III 1.44 模板，作为后续驱动解耦和系统迁移的目标工程。两套工程沿用同一
+构建的 μC/OS-III 1.45 工程，作为后续驱动解耦和系统迁移的目标工程。两套工程沿用同一
 FPGA bitstream 和 Xilinx SDK 2019.1 硬件平台。
 
 项目首先建设安全、可测试的 ARM 端飞控基础平台，首个目标机型为六旋翼；后续通过
@@ -20,7 +20,7 @@ FPGA bitstream 和 Xilinx SDK 2019.1 硬件平台。
 
 ## 项目状态
 
-当前版本：[`0.1.0-alpha.1`](./VERSION)
+当前版本：[`0.2.0-alpha.1`](./VERSION)
 
 | 模块 | 状态 |
 |---|---|
@@ -104,7 +104,7 @@ PWM / CAN ESC / 舵机 / WP40 / 配电控制
 │     ├─ flight_control/              当前 1 ms 控制任务框架
 │     ├─ ucas/                        现有板级和外设驱动
 │     └─ mavlink/                     生成的 MAVLink C 头文件
-├─ FlightControl_ucos_bsp/            μC/OS-III 1.44 BSP 配置
+├─ FlightControl_ucos_bsp/            μC/OS-III 1.45 BSP 配置
 ├─ FlightControl_ucos/                μC/OS-III ARM 模板应用
 │  └─ src/
 │     ├─ core/                        公共状态码
@@ -135,7 +135,7 @@ BOOT.BIN。BSP 的工程描述和 `system.mss` 会被跟踪，由 SDK 2019.1 重
 | CPU | `ps7_cortexa9_0` / ARM Cortex-A9 |
 | SDK | Xilinx SDK 2019.1 |
 | 现有主应用操作系统 | `freertos10_xilinx 1.3` |
-| 迁移模板操作系统 | Micrium `ucos 1.44` |
+| 迁移模板操作系统 | Micrium `ucos 1.45` / μC/OS-III `3.07.05` |
 | FSBL 操作系统 | `standalone 7.0` |
 | 应用编译器 | ARM GNU，硬浮点配置 |
 | 地面站方向 | QGroundControl + MAVLink 2 |
@@ -198,7 +198,7 @@ D:\Xilinx\SDK\2019.1
 3. 首次克隆后生成/构建 `FlightControl_bsp`，需要时重新生成；
 4. 使用 Debug 配置构建 `FlightControl`。
 
-μC/OS-III 工程需要先在 SDK 中注册本地 Micrium Xilinx Repository 1.44。推荐使用
+μC/OS-III 工程需要先在 SDK 中注册本地 Micrium Xilinx Repository 1.45。推荐使用
 [`scripts/setup_ucos3.ps1`](./scripts/setup_ucos3.ps1) 自动恢复环境、重新生成 BSP 并构建；
 完整说明见 [`docs/UCOS3_环境与模板工程.md`](./docs/UCOS3_环境与模板工程.md)。
 驱动分层、安全门和上机前检查见
@@ -250,7 +250,7 @@ FlightControl_ucos/Debug/FlightControl_ucos.elf
 - [x] 恢复 SDK 2019.1 离线 Debug 构建基线；
 - [x] 建立与 legacy 对照区分离的开发工作区；
 - [x] 建立 GitHub 仓库、版本规范和首个预发布版本；
-- [x] 建立 μC/OS-III 1.44 BSP、模板应用和可重复构建脚本；
+- [x] 建立 μC/OS-III 1.45 BSP、模板应用和可重复构建脚本；
 - [x] 建立独立驱动接口、单调时间、日志、安全门和健康监测；
 - [ ] 断负载验证基础模板的串口、Tick、任务调度和全局定时器；
 - [ ] 在硬件资源表确认后实现 GPIO 输入、LED 和硬件看门狗后端；

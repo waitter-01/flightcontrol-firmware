@@ -1,4 +1,4 @@
-# FlightControl μC/OS-III 环境与模板工程
+# FlightControl μC/OS-III 1.45 环境与模板工程
 
 ## 1. 当前结论
 
@@ -7,7 +7,7 @@
 - 应用工程：`FlightControl_ucos`；
 - BSP 工程：`FlightControl_ucos_bsp`；
 - 处理器：`ps7_cortexa9_0`；
-- 操作系统：Micrium μC/OS-III 1.44；
+- 操作系统：Micrium μC/OS-III 1.45，内核版本 3.07.05；
 - 工具链：Xilinx SDK 2019.1；
 - 节拍频率：1 kHz；
 - 控制台：PS UART0；
@@ -18,7 +18,7 @@ FreeRTOS 飞控应用。后续应先迁移独立驱动和公共服务，再逐�
 
 ## 2. 第三方软件与许可边界
 
-使用的本地资料为 Micrium Xilinx Repository 1.44。执行脚本时，参数必须指向其中真正的
+使用的本地资料为 Micrium Xilinx Repository 1.45。执行脚本时，参数必须指向其中真正的
 `ucos` 子目录；该目录下应直接包含：
 
 ```text
@@ -38,11 +38,11 @@ Micrium 源码受其自身许可约束。仓库不会复制或提交 `ucos_osiii
 在 PowerShell 中运行：
 
 ```powershell
-cd D:\ZynqWork\flightcontrol-firmware
+cd D:\ZynqWork\flightcontrol-ucos145
 
 .\scripts\setup_ucos3.ps1 `
   -SdkRoot 'D:\Xilinx\SDK\2019.1' `
-  -MicriumRepository 'D:\资料目录\ucos_v1_44\ucos'
+  -MicriumRepository 'D:\ZynqWork\ucos_v1_45\ucos'
 ```
 
 脚本会依次完成：
@@ -63,7 +63,7 @@ cd D:\ZynqWork\flightcontrol-firmware
 
 ```powershell
 .\scripts\setup_ucos3.ps1 `
-  -MicriumRepository 'D:\资料目录\ucos_v1_44\ucos' `
+  -MicriumRepository 'D:\ZynqWork\ucos_v1_45\ucos' `
   -SkipBuild
 ```
 
@@ -81,13 +81,13 @@ cd D:\ZynqWork\flightcontrol-firmware
 | `OS_CFG_TS_EN` | true | 为统计和调度测量提供时间戳 |
 | `stdin` / `stdout` | `ps7_uart_0` | 模板串口控制台 |
 
-模板还使用 Micrium 提供的 Zynq 驱动替换项，包括 `ucos_l2cachec`、`ucos_scuc`、
-`ucos_scutimer` 和 `ucos_uartps`。
+v1.45 已调整 Zynq BSP 的驱动模型：`ps7_l2cachec_0` 和 `ps7_scuc_0` 使用
+`generic 2.0`，`ps7_scutimer_0` 使用 Xilinx `scutimer 2.1`，PS UART 使用
+`ucos_uartps 1.45`。旧版的 `ucos_l2cachec`、`ucos_scuc` 和 `ucos_scutimer` 已不存在，
+不能只把旧 `system.mss` 中的版本号机械替换成 1.45。
 
-当前本机 `gpiops_v3_5` 源码引用了较新工具链中的 `XPLAT_versal`，而 Micrium 1.44 的
-`ucos_standalone` 未定义该枚举。脚本为 Cortex-A9 编译增加 `-DXPLAT_versal=5`。Zynq-7000
-运行时的平台值是 `XPLAT_ZYNQ`，不会进入 Versal 分支。将来更换 SDK 或 Micrium 版本后，
-应重新检查并删除不再需要的兼容宏。
+v1.45 的 `ucos_standalone` 已包含 SDK 2019.1 所需的平台枚举，因此不再追加
+`-DXPLAT_versal` 兼容宏。
 
 ## 5. 生成物和版本管理
 

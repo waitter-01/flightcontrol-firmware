@@ -117,7 +117,7 @@ Tick 冲突，因此不能直接迁移。
 ```powershell
 .\scripts\setup_ucos3.ps1 `
   -SdkRoot 'D:\Xilinx\SDK\2019.1' `
-  -MicriumRepository 'D:\资料目录\ucos_v1_44\ucos'
+  -MicriumRepository 'D:\ZynqWork\ucos_v1_45\ucos'
 ```
 
 验证结果：
@@ -126,7 +126,7 @@ Tick 冲突，因此不能直接迁移。
 - 所有新增源文件参与 ARM GNU 编译；
 - 新增代码没有编译器 warning；
 - 应用链接通过；
-- ELF：`text 81916 B`、`data 2544 B`、`bss 38400 B`，合计 `122860 B`。
+- ELF：`text 127432 B`、`data 2508 B`、`bss 41312 B`，合计 `171252 B`。
 
 BSP 中原有的自定义 AXI self-test 和 Micrium UART 驱动仍有历史 warning，和本阶段新增代码
 无关，后续应单独处理。

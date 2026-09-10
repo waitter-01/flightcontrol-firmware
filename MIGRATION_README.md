@@ -2,7 +2,10 @@
 
 ## 工作区定位
 
-- 开发副本：`D:\ZynqWork\flightcontrol-dev-2019.1\FlightControl`
+- 当前开发副本：`D:\ZynqWork\flightcontrol-ucos145`
+- 当前 Git 分支：`feature/ucos145-migration`
+- Micrium 仓库：`D:\ZynqWork\ucos_v1_45\ucos`（版本 1.45）
+- 旧开发副本：`D:\ZynqWork\flightcontrol-dev-2019.1\FlightControl`（仅作对照）
 - 只读基线：`D:\ZynqWork\legacy-2019.1\FlightControl`
 - 工具版本：Xilinx SDK 2019.1
 
@@ -15,13 +18,14 @@
 - 未复制旧 Debug/Release 构建目录，已在新路径重新生成；
 - 调试 Tcl 脚本中的 HDF、bitstream、PS7 初始化文件和 ELF 路径已迁移；
 - `libmetal` 工具链路径及 CMake 构建缓存已在新目录重新生成；
-- `FSBL_bsp`、`FlightControl_bsp`、`FSBL/Debug`、`FlightControl/Debug` 均已构建成功。
+- 将 μC/OS-III BSP 和库从 Micrium 1.44 升级到 1.45；
+- 按 1.45 组件清单重新映射 L2 Cache、SCU、SCU Timer 和 PS UART 驱动；
+- `FlightControl_ucos_bsp` 与 `FlightControl_ucos/Debug` 已离线构建成功。
 
 ## 当前构建产物
 
-- `FSBL\Debug\FSBL.elf`
-- `FlightControl\Debug\FlightControl.elf`
-- `FlightControl_bsp\ps7_cortexa9_0\lib\libmetal.a`
+- `FlightControl_ucos\Debug\FlightControl_ucos.elf`
+- `FlightControl_ucos_bsp\ps7_cortexa9_0\lib\libxil.a`
 
 ## 安全边界
 
@@ -29,9 +33,8 @@
 
 ## 已知警告
 
-- `FALSE` 宏重复定义；
-- `SetPD_Enable`、`SetPD_Status` 存在隐式函数声明；
-- MAVLink SYS_STATUS 中的 `volt`、`current`、`RMPercent` 可能未初始化；
-- 部分变量未使用、CRC 接口丢弃 `const` 限定。
+- 自定义 AXI UART、AD7606 驱动仍有符号比较和未使用变量警告；
+- Micrium 1.45 的 `ucos_uartps.c` 存在波特率局部变量可能未初始化警告；
+- `xtime_l.h` 输出兼容性提示。
 
 这些警告没有阻止当前 Debug 构建，但进入实际上板和控制逻辑开发前应分级处理。
